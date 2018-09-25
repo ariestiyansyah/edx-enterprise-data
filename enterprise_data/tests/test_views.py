@@ -507,7 +507,7 @@ class TestEnterpriseLearnerCompletedCourses(APITestCase):
             'num_pages': 1,
             'current_page': 1,
             'results': [{
-                'completed_courses': 2,
+                'completed_courses': 1,
                 'user_email': 'test@example.com'
             }],
             'next': None,
@@ -526,7 +526,7 @@ class TestEnterpriseLearnerCompletedCourses(APITestCase):
         url = reverse('v0:enterprise-learner-completed-courses-list',
                       kwargs={'enterprise_id': self.enterprise_id})
         url += '?no_page=true'
-        expected_result = [{'completed_courses': 2, 'user_email': 'test@example.com'}]
+        expected_result = [{'completed_courses': 1, 'user_email': 'test@example.com'}]
         response = self.client.get(url)
         assert response.status_code == status.HTTP_200_OK
         result = response.json()

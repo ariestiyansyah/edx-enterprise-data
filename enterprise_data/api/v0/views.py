@@ -258,6 +258,7 @@ class EnterpriseLearnerCompletedCoursesViewSet(EnterpriseViewSet, viewsets.Model
         # Get the number of completed courses against a learner.
         enrollments = EnterpriseEnrollment.objects.filter(
             enterprise_id=enterprise_id,
-            has_passed=True
+            has_passed=True,
+            consent_granted=True,
         ).values('user_email').annotate(completed_courses=Count('course_id')).order_by('user_email')
         return enrollments
