@@ -293,6 +293,7 @@ class TestEnterpriseUsersViewSet(APITestCase):
         EnterpriseEnrollmentFactory(
             enterprise_user=self.ent_user4,
             course_end=date_in_past,
+            has_passed=True,
         )
         EnterpriseEnrollmentFactory(
             enterprise_user=self.ent_user4,
@@ -432,6 +433,42 @@ class TestEnterpriseUsersViewSet(APITestCase):
         )
         response = self.client.get(url,)
         assert 'enrollment_count' not in response.json()
+
+    def test_viewset_course_completion_count_present(self):
+        """
+        EnterpriseUserViewset should ultimately return a response that includes
+        the `course_completion_count` field if "course_completion_count" is
+        specified in the "extra_fields" query parameter value.
+        """
+        kwargs = {
+            'enterprise_id': 'ee5e6b3a-069a-4947-bb8d-d2dbc323396c',
+            'pk': self.ent_user4.id,
+        }
+        params = {'extra_fields': 'course_completion_count', }
+        url = reverse(
+            'v0:enterprise-users-detail',
+            kwargs=kwargs,
+        )
+        response = self.client.get(url, params)
+        assert response.json()['course_completion_count'] == 1
+
+    def test_viewset_course_completion_count_not_present(self):
+        """
+        EnterpriseUserViewset should ultimately return a response that
+        does not include the `course_completion_count` field if
+        "course_completion_count" is not specified in the "extra_fields" query
+        parameter value.
+        """
+        kwargs = {
+            'enterprise_id': 'ee5e6b3a-069a-4947-bb8d-d2dbc323396c',
+            'pk': self.ent_user4.id,
+        }
+        url = reverse(
+            'v0:enterprise-users-detail',
+            kwargs=kwargs,
+        )
+        response = self.client.get(url,)
+        assert 'course_completion_count' not in response.json()
 
     def test_no_page_querystring_skips_pagination(self):
         """

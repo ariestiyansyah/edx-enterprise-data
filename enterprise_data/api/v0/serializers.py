@@ -42,6 +42,9 @@ class EnterpriseUserSerializer(serializers.ModelSerializer):
         if extra_fields is not None:
             if 'enrollment_count' in extra_fields:
                 representation['enrollment_count'] = instance.enrollments.count()
+            if 'course_completion_count' in extra_fields:
+                representation['course_completion_count'] = instance.enrollments.filter(has_passed=True).count()
+
         return representation
 
 
